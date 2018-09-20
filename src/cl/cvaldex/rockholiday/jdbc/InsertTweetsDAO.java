@@ -40,10 +40,15 @@ public class InsertTweetsDAO {
 				insertTweetPS.setDate(2, java.sql.Date.valueOf(tmpTweet.getDate()));
 				insertTweetPS.setString(3, tmpTweet.getAuthor());
 				
-				insertTweetPS.setBinaryStream(4, tmpTweet.getImage1());
-				insertTweetPS.setBinaryStream(5, tmpTweet.getImage2());
-				insertTweetPS.setBinaryStream(6, tmpTweet.getImage3());
-				insertTweetPS.setBinaryStream(7, tmpTweet.getImage4());
+				//insertTweetPS.setBinaryStream(4, tmpTweet.getImage1());
+				//insertTweetPS.setBinaryStream(5, tmpTweet.getImage2());
+				//insertTweetPS.setBinaryStream(6, tmpTweet.getImage3());
+				//insertTweetPS.setBinaryStream(7, tmpTweet.getImage4());
+				
+				setImage(insertTweetPS, 4 , tmpTweet.getImage1());
+				setImage(insertTweetPS, 5 , tmpTweet.getImage2());
+				setImage(insertTweetPS, 6 , tmpTweet.getImage3());
+				setImage(insertTweetPS, 7 , tmpTweet.getImage4());
 	
 				insertTweetPS.execute();
 			}
@@ -63,5 +68,14 @@ public class InsertTweetsDAO {
 		builder.append("VALUES (? , ? , ? , ? , ? , ? , ?) ");
 		
 		return builder.toString();
+	}
+	
+	private void setImage(PreparedStatement pstmt , int index , InputStream input) throws SQLException{
+		if(input != null){
+			pstmt.setBinaryStream(index, input);
+		}
+		else{
+			pstmt.setNull(index, java.sql.Types.BINARY);
+		}
 	}
 }

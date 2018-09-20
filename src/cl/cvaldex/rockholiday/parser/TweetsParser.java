@@ -89,7 +89,8 @@ public class TweetsParser extends BaseGoogleSheetsParser{
 
     public InputStream getInputStream(String filePath) throws FileNotFoundException{
         if(filePath == null || filePath.trim().length() == 0){
-            filePath = DEFAULT_EMPTY_IMAGE;
+            //filePath = DEFAULT_EMPTY_IMAGE;
+        	return null;
         }
 
         File tmpFile = new File(filePath);

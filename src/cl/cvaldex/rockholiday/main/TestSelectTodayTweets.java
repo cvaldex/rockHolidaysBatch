@@ -18,7 +18,7 @@ import cl.cvaldex.rockholiday.vo.TweetVO;
 public class TestSelectTodayTweets {
 
 	public static void main(String[] args) throws IOException {
-		String date = "2018-09-12";
+		String date = "2018-09-13";
 		
 		BaseDataSource ds = new PGSimpleDataSource();
 		ds.setUrl("jdbc:postgresql://rockholidays.cvecralyfpim.us-east-1.rds.amazonaws.com:5432/rockholidays");
@@ -28,18 +28,24 @@ public class TestSelectTodayTweets {
 		SelectTweetsDAO td = new SelectTweetsDAO((DataSource) ds);
 		
 		Collection<TweetVO> c = td.getTweetsByDate(date);
-		Iterator<TweetVO> i = c.iterator();
 		
-		TweetVO tmp = null;
-		
-		while (i.hasNext()){
-			tmp = i.next();
-			System.out.println(tmp.toString());
+		if(c.size() > 0){
+			Iterator<TweetVO> i = c.iterator();
 			
-			writeFile(tmp.getImage1() , tmp.getId()+"_image_1.jpg");
-			writeFile(tmp.getImage2() , tmp.getId()+"_image_2.jpg");
-			writeFile(tmp.getImage3() , tmp.getId()+"_image_3.jpg");
-			writeFile(tmp.getImage4() , tmp.getId()+"_image_4.jpg");
+			TweetVO tmp = null;
+			
+			while (i.hasNext()){
+				tmp = i.next();
+				System.out.println(tmp.toString());
+				
+				writeFile(tmp.getImage1() , tmp.getId()+"_image_1.jpg");
+				writeFile(tmp.getImage2() , tmp.getId()+"_image_2.jpg");
+				writeFile(tmp.getImage3() , tmp.getId()+"_image_3.jpg");
+				writeFile(tmp.getImage4() , tmp.getId()+"_image_4.jpg");
+			}
+		}
+		else{
+			System.out.println("No data found!");
 		}
 	}
 	
