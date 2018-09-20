@@ -1,6 +1,7 @@
 package cl.cvaldex.rockholiday.jdbc;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

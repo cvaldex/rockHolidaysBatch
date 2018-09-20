@@ -54,7 +54,7 @@ public class SelectTweetsDAO {
 	private String assembleQuery(){
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("SELECT tweet, eventdate, author, image1, image2, image3, image4 FROM public.tweets ");
+		builder.append("SELECT tweet, eventdate, author, image1, image2, image3, image4, id FROM public.tweets ");
 		builder.append("WHERE  Extract(month from eventdate) = Extract(month from ?::DATE)");
 		builder.append("AND    Extract(day from eventdate) = Extract(day from ?::DATE)");
 		
@@ -76,6 +76,7 @@ public class SelectTweetsDAO {
 			tweet.setImage2(rs.getBinaryStream(5));
 			tweet.setImage3(rs.getBinaryStream(6));
 			tweet.setImage4(rs.getBinaryStream(7));
+			tweet.setId(rs.getInt(8));
 		
 			tweets.add(tweet);
 		}

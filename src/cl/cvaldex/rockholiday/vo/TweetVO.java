@@ -3,6 +3,7 @@ package cl.cvaldex.rockholiday.vo;
 import java.io.InputStream;
 
 public class TweetVO {
+	private int id;
 	private String text;
 	private String date;
 	private String author;
@@ -56,12 +57,13 @@ public class TweetVO {
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		
+		builder.append(id);
+		builder.append(" - ");
 		builder.append(date);
 		builder.append(" - ");
 		builder.append(author);
 		builder.append(" - ");
 		builder.append(text);
-		
 		
 		return builder.toString();
 	}
@@ -71,6 +73,12 @@ public class TweetVO {
 	}
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 }
