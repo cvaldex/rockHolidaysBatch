@@ -12,7 +12,11 @@ import cl.cvaldex.rockholiday.jdbc.UpdateImageTweetDAO;
 public class TestUpdateDAO {
 	public static void main(String [] args) throws FileNotFoundException{
 		BaseDataSource ds = new PGSimpleDataSource();
-		ds.setUrl("jdbc:postgresql://rockholidays.cvecralyfpim.us-east-1.rds.amazonaws.com:5432/rockholidays");
+		
+		ds.setServerName("rockholidays.cvecralyfpim.us-east-1.rds.amazonaws.com");
+		ds.setPortNumber(5432);
+		ds.setDatabaseName("rockholidays");
+		
 		ds.setUser("rockholidays");
 		ds.setPassword("rockholidays2018");
 		

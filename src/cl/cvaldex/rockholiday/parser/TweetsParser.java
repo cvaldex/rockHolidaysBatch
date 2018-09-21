@@ -23,8 +23,6 @@ public class TweetsParser extends BaseGoogleSheetsParser{
     private static int IMAGE_PATH_4_INDEX = 7;
     private static int LOAD_CONTROL_INDEX = 8;
 
-    private static String DEFAULT_EMPTY_IMAGE = "/Users/cvaldesc/one-pixel-square.png";
-
     public Collection<TweetVO> parse() throws Exception {
     	if(secretsFilePath == null || secretsFilePath.trim().length() == 0){
     		throw new Exception("secretsFilePath cannot be null or empty");
@@ -55,7 +53,7 @@ public class TweetsParser extends BaseGoogleSheetsParser{
 
         	short loopIndex = 0;
 
-        	for (List row : values) {
+        	for (List<?> row : values) {
         		//saltar la primera fila ya que son titulos
         		if(loopIndex == 0){
         			loopIndex++;

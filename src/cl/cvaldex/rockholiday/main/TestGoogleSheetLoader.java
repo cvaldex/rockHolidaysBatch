@@ -27,12 +27,11 @@ public class TestGoogleSheetLoader {
 		
 		Collection<TweetVO> tweets = gsParser.parse();
 		
-		//printTweets(tweets);
-		
-		
 		BaseDataSource ds = new PGSimpleDataSource();
-		ds.setUrl("jdbc:postgresql://rockholidays.cvecralyfpim.us-east-1.rds.amazonaws.com:5432/rockholidays");
-		//ds.setUrl("jdbc:postgresql://52.21.168.18:5432/rockholidays");
+		ds.setServerName("rockholidays.cvecralyfpim.us-east-1.rds.amazonaws.com");
+		ds.setPortNumber(5432);
+		ds.setDatabaseName("rockholidays");
+		
 		ds.setUser("rockholidays");
 		ds.setPassword("rockholidays2018");
 		
@@ -71,5 +70,4 @@ public class TestGoogleSheetLoader {
 		
 		outStream.close();
 	}
-
 }
