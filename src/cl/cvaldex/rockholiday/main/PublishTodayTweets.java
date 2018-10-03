@@ -16,12 +16,12 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.postgresql.ds.common.BaseDataSource;
 
 import cl.cvaldex.rockholiday.jdbc.SelectTweetsDAO;
-import cl.cvaldex.rockholiday.twitter.TwitterMgr;
+import cl.cvaldex.rockholiday.twitter.TwitterManager;
 import cl.cvaldex.rockholiday.vo.TweetVO;
 import twitter4j.TwitterException;
 
-public class TestPublishTodayTweets {
-	static final Logger logger = LogManager.getLogger(TestPublishTodayTweets.class);
+public class PublishTodayTweets {
+	static final Logger logger = LogManager.getLogger(PublishTodayTweets.class);
 	/*
 	 * Arguments: dbServerName dbServerPort dbName dbUserName dbPassword queryDate
 	 */
@@ -46,11 +46,6 @@ public class TestPublishTodayTweets {
 		ds.setUser(dbUserName);
 		ds.setPassword(dbPassword);
 		
-		String oAuthConsumerKey = "MGgECzgt0ya6cOUdyFZW12aHy";
-		String oAuthConsumerSecret = "zdv97q16Ftr6yAEGZZDpyGS9Dmb4I1hXMVUM0J5fa1ud9U5flJ";
-		String oAuthAccessToken = "880501987187601408-4Dug6WDjzOT0FUOqtLOxG64JXzvxLx7";
-		String oAuthAccessTokenSecret = "knqsFH82do67mbvRi65CbfzfOmdq3o7Q9W2NFWq0v8tNt";
-		
 		logger.info("Query Date: " + queryDate);
 		
 		SelectTweetsDAO td = new SelectTweetsDAO((DataSource) ds);
@@ -65,14 +60,8 @@ public class TestPublishTodayTweets {
 			
 			Iterator<TweetVO> i = c.iterator();
 			
-			//TweetVO tmp = null;
-			
-			TwitterMgr twitterManager = new TwitterMgr();
-			
-			twitterManager.setoAuthConsumerKey(oAuthConsumerKey);
-			twitterManager.setoAuthConsumerSecret(oAuthConsumerSecret);
-			twitterManager.setoAuthAccessToken(oAuthAccessToken);
-			twitterManager.setoAuthAccessTokenSecret(oAuthAccessTokenSecret);
+			TwitterManager twitterManager = new TwitterManager();
+			twitterManager.loadConfiguration((DataSource) ds, "public.properties", "key", "value");
 
 			while (i.hasNext()){
 				twitterManager.publishTweet(i.next());

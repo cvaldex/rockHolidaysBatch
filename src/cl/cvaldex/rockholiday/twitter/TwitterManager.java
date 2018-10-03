@@ -5,37 +5,58 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.configuration2.DatabaseConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cl.cvaldex.rockholiday.vo.TweetVO;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.UploadedMedia;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class TwitterMgr {
+public class TwitterManager {
 	private String oAuthConsumerKey;
 	private String oAuthConsumerSecret;
 	private String oAuthAccessToken;
 	private String oAuthAccessTokenSecret;
-
+	
+	private ConfigurationBuilder configurationBuilder;
+	private Configuration twitterConfiguration;
+	
+	protected static String OAUTH_CONSUMER_KEY = "twitter.api.oAuthConsumerKey";
+	protected static String OAUTH_CONSUMER_SECRET = "twitter.api.oAuthConsumerSecret";
+	protected static String OAUTH_ACCESS_TOKEN = "twitter.api.oAuthAccessToken";
+	protected static String OAUTH_ACCESS_TOKEN_SECRET = "twitter.api.oAuthAccessTokenSecret";
+	
+	static final Logger logger = LogManager.getLogger(TwitterManager.class);
+	
 	public void publishTweet(TweetVO tweet) throws TwitterException, IOException {
-		System.out.println("Starting security configuration");
+		if(configurationBuilder == null){
+			configurationBuilder = createConfigurationBuilder();
+			twitterConfiguration = configurationBuilder.build();
+		}
 		
-		ConfigurationBuilder cb = createConfigurationBuilder();
-		
-		TwitterFactory tf = new TwitterFactory(cb.build());
+		TwitterFactory tf = new TwitterFactory(twitterConfiguration);//(configurationBuilder.build());
 		Twitter twitter = tf.getInstance();
 		
 		StatusUpdate status = new StatusUpdate(tweet.getText());
 		processImages(twitter , status , tweet);
 		
-		System.out.println("Publishing Tweet");
+		logger.info("Publishing Tweet");
 		twitter.updateStatus(status);
-		System.out.println("Publishing Tweet Finished");
+		logger.info("Publishing Tweet Finished");
 	}
 	
 	private ConfigurationBuilder createConfigurationBuilder() throws TwitterException{
+		logger.info("Starting twitter configuration builder");
+		
 		if(oAuthConsumerKey == null || oAuthConsumerKey.trim().length() == 0) throw new TwitterException("Missing parameter OAuthConsumerKey");
 		if(oAuthConsumerSecret == null || oAuthConsumerSecret.trim().length() == 0) throw new TwitterException("Missing parameter OAuthConsumerSecret");
 		if(oAuthAccessToken == null || oAuthAccessToken.trim().length() == 0) throw new TwitterException("Missing parameter OAuthAccessToken");
@@ -45,6 +66,7 @@ public class TwitterMgr {
 				.setOAuthConsumerSecret(oAuthConsumerSecret)
 				.setOAuthAccessToken(oAuthAccessToken)
 				.setOAuthAccessTokenSecret(oAuthAccessTokenSecret);
+		
 		return configurationBuilder;
 	}
 	
@@ -87,9 +109,6 @@ public class TwitterMgr {
 		System.arraycopy( mediaIds, 0, mediaIdsFinal, 0, index );
 		
 		status.setMediaIds(mediaIdsFinal);
-		
-		
-		
 	}
 	
 	private static void writeFile(InputStream input , File file) throws IOException{
@@ -107,7 +126,9 @@ public class TwitterMgr {
 	}
 
 	public void setoAuthConsumerKey(String oAuthConsumerKey) {
-		this.oAuthConsumerKey = oAuthConsumerKey;
+		if(oAuthConsumerKey != null){
+			this.oAuthConsumerKey = oAuthConsumerKey.trim();
+		}
 	}
 
 	public String getoAuthConsumerSecret() {
@@ -115,7 +136,9 @@ public class TwitterMgr {
 	}
 
 	public void setoAuthConsumerSecret(String oAuthConsumerSecret) {
-		this.oAuthConsumerSecret = oAuthConsumerSecret;
+		if(oAuthConsumerSecret != null){
+			this.oAuthConsumerSecret = oAuthConsumerSecret.trim();
+		}
 	}
 
 	public String getoAuthAccessToken() {
@@ -123,7 +146,9 @@ public class TwitterMgr {
 	}
 
 	public void setoAuthAccessToken(String oAuthAccessToken) {
-		this.oAuthAccessToken = oAuthAccessToken;
+		if(oAuthAccessToken != null){
+			this.oAuthAccessToken = oAuthAccessToken.trim();
+		}
 	}
 
 	public String getoAuthAccessTokenSecret() {
@@ -131,7 +156,21 @@ public class TwitterMgr {
 	}
 
 	public void setoAuthAccessTokenSecret(String oAuthAccessTokenSecret) {
-		this.oAuthAccessTokenSecret = oAuthAccessTokenSecret;
+		if(oAuthAccessTokenSecret != null){
+			this.oAuthAccessTokenSecret = oAuthAccessTokenSecret.trim();
+		}
 	}
-
+	
+	public void loadConfiguration(DataSource dataSource, String tableName, String keyColumn, String valueColumn){
+		DatabaseConfiguration config = new DatabaseConfiguration();
+		config.setDataSource(dataSource);
+		config.setTable(tableName);
+		config.setKeyColumn(keyColumn);
+		config.setValueColumn(valueColumn);
+		
+		this.setoAuthConsumerKey(config.getString(OAUTH_CONSUMER_KEY));
+		this.setoAuthConsumerSecret(config.getString(OAUTH_CONSUMER_SECRET));
+		this.setoAuthAccessToken(config.getString(OAUTH_ACCESS_TOKEN));
+		this.setoAuthAccessTokenSecret(config.getString(OAUTH_ACCESS_TOKEN_SECRET));
+	}
 }
