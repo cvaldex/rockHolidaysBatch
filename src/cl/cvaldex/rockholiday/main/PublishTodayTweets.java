@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -25,7 +26,7 @@ public class PublishTodayTweets {
 	/*
 	 * Arguments: dbServerName dbServerPort dbName dbUserName dbPassword queryDate
 	 */
-	public static void main(String[] args) throws IOException, TwitterException {
+	public static void main(String[] args) throws IOException, TwitterException, ParseException {
 		if(args.length < 6){
 			logger.error("Invalid args, must be 6: dbServerName dbServerPort dbName dbUserName dbPassword queryDate");
 			System.exit(1);

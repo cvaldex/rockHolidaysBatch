@@ -10,11 +10,16 @@ import java.util.Iterator;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cl.cvaldex.rockholiday.vo.TweetVO;
 
 public class InsertTweetsDAO {
 	private DataSource ds;
-
+	
+	static final Logger logger = LogManager.getLogger(InsertTweetsDAO.class);
+	
 	public InsertTweetsDAO(DataSource ds){
 		this.ds = ds;
 	}
@@ -23,7 +28,7 @@ public class InsertTweetsDAO {
 		PreparedStatement insertTweetPS = null;
 		Connection conn = null;
 
-		System.out.println("Elementos a insertar: " + tweets.size());
+		logger.info("Elementos a insertar: " + tweets.size());
 		
 		try {
 			conn = ds.getConnection();
@@ -39,11 +44,6 @@ public class InsertTweetsDAO {
 				insertTweetPS.setString(1, tmpTweet.getText());
 				insertTweetPS.setDate(2, java.sql.Date.valueOf(tmpTweet.getDate()));
 				insertTweetPS.setString(3, tmpTweet.getAuthor());
-				
-				//insertTweetPS.setBinaryStream(4, tmpTweet.getImage1());
-				//insertTweetPS.setBinaryStream(5, tmpTweet.getImage2());
-				//insertTweetPS.setBinaryStream(6, tmpTweet.getImage3());
-				//insertTweetPS.setBinaryStream(7, tmpTweet.getImage4());
 				
 				setImage(insertTweetPS, 4 , tmpTweet.getImage1());
 				setImage(insertTweetPS, 5 , tmpTweet.getImage2());
