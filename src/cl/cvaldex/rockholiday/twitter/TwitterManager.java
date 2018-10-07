@@ -155,7 +155,7 @@ public class TwitterManager {
 		String tmpDir = System.getProperty("java.io.tmpdir");
 		String systemFileSeparator = System.getProperty("file.separator");
 		
-		if(tmpDir.endsWith(systemFileSeparator)){
+		if(! tmpDir.endsWith(systemFileSeparator)){
 			tmpDir = tmpDir + systemFileSeparator;
 		}
 		
