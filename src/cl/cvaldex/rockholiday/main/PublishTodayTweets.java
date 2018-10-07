@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.Iterator;
-
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +15,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.postgresql.ds.common.BaseDataSource;
 
 import cl.cvaldex.rockholiday.jdbc.SelectTweetsDAO;
+import cl.cvaldex.rockholiday.jdbc.UpdatePublishedTweetDAO;
 import cl.cvaldex.rockholiday.twitter.TwitterManager;
 import cl.cvaldex.rockholiday.vo.TweetVO;
 import twitter4j.TwitterException;
@@ -27,8 +26,8 @@ public class PublishTodayTweets {
 	 * Arguments: dbServerName dbServerPort dbName dbUserName dbPassword queryDate
 	 */
 	public static void main(String[] args) throws IOException, TwitterException, ParseException {
-		if(args.length < 6){
-			logger.error("Invalid args, must be 6: dbServerName dbServerPort dbName dbUserName dbPassword queryDate");
+		if(args.length < 5){
+			logger.error("Invalid args, must be 5: dbServerName dbServerPort dbName dbUserName dbPassword");
 			System.exit(1);
 		}
 		
@@ -37,7 +36,6 @@ public class PublishTodayTweets {
 		String dbName = args[2];
 		String dbUserName = args[3];
 		String dbPassword = args[4];
-		String queryDate = args[5];
 		
 		BaseDataSource ds = new PGSimpleDataSource();
 		
@@ -47,25 +45,29 @@ public class PublishTodayTweets {
 		ds.setUser(dbUserName);
 		ds.setPassword(dbPassword);
 		
-		logger.info("Query Date: " + queryDate);
-		
 		SelectTweetsDAO td = new SelectTweetsDAO((DataSource) ds);
 		
-		Collection<TweetVO> c = td.getTweetsByDate(queryDate);
+		logger.info("Getting tweet to publish");
 		
+		Collection<TweetVO> c = td.getTweetToPublish();
+	
 		int resultsFound = c.size();
 		
 		if(resultsFound > 0){
 			logger.info(resultsFound + " results found!");
 			logger.info("Images will be stored in: " + System.getProperty("java.io.tmpdir"));
 			
-			Iterator<TweetVO> i = c.iterator();
-			
 			TwitterManager twitterManager = new TwitterManager();
 			twitterManager.loadConfiguration((DataSource) ds, "public.properties", "key", "value");
-
-			while (i.hasNext()){
-				twitterManager.publishTweet(i.next());
+			
+			UpdatePublishedTweetDAO updatePublishedTweetDAO = new UpdatePublishedTweetDAO((DataSource)ds);
+			
+			for(TweetVO vo : c){
+				//publicar el tweet en el timeline
+				twitterManager.publishTweet(vo);
+				
+				//actualizar el status del tweet en Base de Datos para no volver a tomarlo
+				updatePublishedTweetDAO.updateTweet(vo.getId());
 			}
 		}
 		else{

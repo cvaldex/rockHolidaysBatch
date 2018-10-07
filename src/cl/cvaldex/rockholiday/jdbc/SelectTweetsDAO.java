@@ -18,7 +18,7 @@ public class SelectTweetsDAO {
 		this.ds = ds;
 	}
 
-	public Collection<TweetVO> getTweetsByDate(String date){
+	public Collection<TweetVO> getTweetToPublish(){
 		Collection<TweetVO> tweets = null;
 
 		PreparedStatement selectTweetsPS = null;
@@ -29,10 +29,6 @@ public class SelectTweetsDAO {
 			conn = ds.getConnection();
 
 			selectTweetsPS = conn.prepareStatement(assembleQuery());
-
-			//setear parámetros para la Query
-			selectTweetsPS.setString(1, date);
-			selectTweetsPS.setString(2, date);
 
 			selectTweetsPS.execute();
 			rs = selectTweetsPS.getResultSet();
@@ -54,9 +50,9 @@ public class SelectTweetsDAO {
 	private String assembleQuery(){
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("SELECT tweet, eventdate, author, image1, image2, image3, image4, id FROM public.tweets ");
-		builder.append("WHERE  Extract(month from eventdate) = Extract(month from ?::DATE)");
-		builder.append("AND    Extract(day from eventdate) = Extract(day from ?::DATE)");
+		builder.append("SELECT tweet, eventdate, author, image1, image2, image3, image4, id FROM public.today_tweets ");
+		builder.append("WHERE row_status = 0"); //el tweet no ha sido publicado aun
+		builder.append("ORDER BY eventdate ASC LIMIT 1"); //ordenados del más antiguo al más nuevo, obtenemos solo el primero
 		
 		return builder.toString();
 	}
