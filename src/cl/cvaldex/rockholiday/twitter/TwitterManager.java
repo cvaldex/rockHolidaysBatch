@@ -114,30 +114,32 @@ public class TwitterManager {
 
 		long[] mediaIds = new long[4];
 		int index = 0;
+		
+		String tempDir = getSystemTempDir();
 
 		if(tweet.getImage1() != null){
-			tmpImage = new File(System.getProperty("java.io.tmpdir") + tweet.getId()+"_01.jpg");
+			tmpImage = new File(tempDir + tweet.getId()+"_01.jpg");
 			writeFile(tweet.getImage1() , tmpImage);
 			media = twitter.uploadMedia(tmpImage);
 			mediaIds[index++] = media.getMediaId();
 		}
 
 		if(tweet.getImage2() != null){
-			tmpImage = new File(System.getProperty("java.io.tmpdir") + tweet.getId()+"_02.jpg");
+			tmpImage = new File(tempDir + tweet.getId()+"_02.jpg");
 			writeFile(tweet.getImage2() , tmpImage);
 			media = twitter.uploadMedia(tmpImage);
 			mediaIds[index++] = media.getMediaId();
 		}
 
 		if(tweet.getImage3() != null){
-			tmpImage = new File(System.getProperty("java.io.tmpdir") + tweet.getId()+"_03.jpg");
+			tmpImage = new File(tempDir + tweet.getId()+"_03.jpg");
 			writeFile(tweet.getImage3() , tmpImage);
 			media = twitter.uploadMedia(tmpImage);
 			mediaIds[index++] = media.getMediaId();
 		}
 
 		if(tweet.getImage4() != null){
-			tmpImage = new File(System.getProperty("java.io.tmpdir") + tweet.getId()+"_04.jpg");
+			tmpImage = new File(tempDir + tweet.getId()+"_04.jpg");
 			writeFile(tweet.getImage4() , tmpImage);
 			media = twitter.uploadMedia(tmpImage);
 			mediaIds[index++] = media.getMediaId();
@@ -147,6 +149,17 @@ public class TwitterManager {
 		System.arraycopy( mediaIds, 0, mediaIdsFinal, 0, index );
 
 		status.setMediaIds(mediaIdsFinal);
+	}
+	
+	private static String getSystemTempDir(){
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		String systemFileSeparator = System.getProperty("file.separator");
+		
+		if(tmpDir.endsWith(systemFileSeparator)){
+			tmpDir = tmpDir + systemFileSeparator;
+		}
+		
+		return tmpDir;
 	}
 
 	private static void writeFile(InputStream input , File file) throws IOException{
