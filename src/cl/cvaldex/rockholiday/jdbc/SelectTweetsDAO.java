@@ -52,7 +52,7 @@ public class SelectTweetsDAO {
 		
 		builder.append("SELECT tweet, eventdate, author, image1, image2, image3, image4, id FROM public.today_tweets ");
 		builder.append("WHERE row_status = 0"); //el tweet no ha sido publicado aun
-		builder.append("ORDER BY eventdate ASC LIMIT 1"); //ordenados del más antiguo al más nuevo, obtenemos solo el primero
+		builder.append("ORDER BY priority, eventdate ASC LIMIT 1"); //ordenados del más antiguo al más nuevo, obtenemos solo el primero
 		
 		return builder.toString();
 	}
